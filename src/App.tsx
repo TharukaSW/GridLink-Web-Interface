@@ -13,6 +13,7 @@ import { Footer } from './components/Footer';
 
 import { HomePage } from './pages/HomePage';
 import { LoginPage } from './pages/LoginPage';
+import { UsersPage } from './pages/UsersPage';
 
 import { AuthUser } from './types';
 
@@ -34,6 +35,8 @@ const AppContent: React.FC = () => {
         return <HomePage onNavigate={setCurrentPage} />;
       case 'login':
         return <LoginPage onLoginSuccess={handleLoginSuccess} />;
+      case 'users':
+        return isAuthenticated && isBackOffice ? <UsersPage /> : <HomePage onNavigate={setCurrentPage} />;
       default:
         return <HomePage onNavigate={setCurrentPage} />;
     }
