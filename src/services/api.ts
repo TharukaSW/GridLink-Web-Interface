@@ -11,6 +11,11 @@
 import {
   ApiResponse,
   AuthUser,
+  BookingSlot,
+  CreateMicrogridNodeDTO,
+  MicrogridNode,
+  UpdateMicrogridNodeDTO,
+  UpdateSlotDTO,
   UpdateUserDTO,
   User,
 } from '../types';
@@ -212,5 +217,128 @@ export const api = {
 
   async getPendingUserActivations(): Promise<ApiResponse<User[]>> {
     return request<User[]>('/api/Users/pending-activations');
+  },
+
+  // --------------------------------------------------------------------------
+  // Solar Microgrid Node Management
+  // --------------------------------------------------------------------------
+  async getMicrogridNodes(params?: {
+    searchTerm?: string;
+    isActive?: boolean;
+    minCapacity?: number;
+    maxCapacity?: number;
+  }): Promise<ApiResponse<MicrogridNode[]>> {
+    const query = new URLSearchParams();
+    if (params?.searchTerm) query.append('searchTerm', params.searchTerm);
+    if (params?.isActive !== undefined) query.append('isActive', String(params.isActive));
+    if (params?.minCapacity) query.append('minCapacity', String(params.minCapacity));
+    if (params?.maxCapacity) query.append('maxCapacity', String(params.maxCapacity));
+    const qs = query.toString();
+    return request<MicrogridNode[]>(`/api/microgrid-nodes${qs ? `?${qs}` : ''}`);
+  },
+
+  async getNearbyNodes(
+    latitude: number,
+    longitude: number,
+    radiusKm: number = 50
+  ): Promise<ApiResponse<MicrogridNode[]>> {
+    return request<MicrogridNode[]>(
+      `/api/microgrid-nodes/nearby?latitude=${latitude}&longitude=${longitude}&radiusKm=${radiusKm}`
+    );
+  },
+
+  async getMicrogridNodeById(id: string): Promise<ApiResponse<MicrogridNode>> {
+    return request<MicrogridNode>(`/api/microgrid-nodes/${id}`);
+  },
+
+  async getNodeByCode(stationCode: string): Promise<ApiResponse<MicrogridNode>> {
+    return request<MicrogridNode>(`/api/microgrid-nodes/code/${encodeURIComponent(stationCode)}`);
+  },
+
+  async createMicrogridNode(payload: CreateMicrogridNodeDTO): Promise<ApiResponse<MicrogridNode>> {
+    return request<MicrogridNode>('/api/microgrid-nodes', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async updateMicrogridNode(id: string, payload: UpdateMicrogridNodeDTO): Promise<ApiResponse<MicrogridNode>> {
+    return request<MicrogridNode>(`/api/microgrid-nodes/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async updateSchedule(id: string, operatingHours: string): Promise<ApiResponse<MicrogridNode>> {
+    return request<MicrogridNode>(`/api/microgrid-nodes/${id}/schedule`, {
+      method: 'PATCH',
+      body: JSON.stringify({ operatingHours }),
+    });
+  },
+
+  async updateBatterySlots(id: string, availableBatterySlots: number): Promise<ApiResponse<MicrogridNode>> {
+    return request<MicrogridNode>(`/api/microgrid-nodes/${id}/battery-slots`, {
+      method: 'PATCH',
+      body: JSON.stringify({ availableBatterySlots }),
+    });
+  },
+
+  async deactivateNode(id: string): Promise<ApiResponse<boolean>> {
+    return request<boolean>(`/api/microgrid-nodes/${id}/deactivate`, {
+      method: 'PATCH',
+    });
+  },
+
+  async activateNode(id: string): Promise<ApiResponse<boolean>> {
+    return request<boolean>(`/api/microgrid-nodes/${id}/activate`, {
+      method: 'PATCH',
+    });
+  },
+
+  async deleteNode(id: string): Promise<ApiResponse<boolean>> {
+    return request<boolean>(`/api/microgrid-nodes/${id}`, {
+      method: 'DELETE',
+    });
+  },
+
+  // --------------------------------------------------------------------------
+  // Booking Slots Management
+  // --------------------------------------------------------------------------
+  async getSlotsByStation(stationId: string, availableOnly?: boolean): Promise<ApiResponse<BookingSlot[]>> {
+    const params = availableOnly !== undefined ? `?availableOnly=${availableOnly}` : '';
+    return request<BookingSlot[]>(`/api/microgrid-nodes/${stationId}/slots${params}`);
+  },
+
+  async getSlotById(slotId: string): Promise<ApiResponse<BookingSlot>> {
+    return request<BookingSlot>(`/api/microgrid-nodes/slots/${slotId}`);
+  },
+
+  async createSlot(
+    stationId: string,
+    payload: {
+      slotTime: string;
+      durationMinutes: number;
+      capacityKWh: number;
+      ratePerKWh: number;
+      isAvailable: boolean;
+    }
+  ): Promise<ApiResponse<BookingSlot>> {
+    return request<BookingSlot>(`/api/microgrid-nodes/${stationId}/slots`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async updateSlot(slotId: string, payload: UpdateSlotDTO): Promise<ApiResponse<BookingSlot>> {
+    return request<BookingSlot>(`/api/microgrid-nodes/slots/${slotId}`, {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async deleteSlot(slotId: string): Promise<ApiResponse<boolean>> {
+    return request<boolean>(`/api/microgrid-nodes/slots/${slotId}`, {
+      method: 'DELETE',
+    });
   },
 };
