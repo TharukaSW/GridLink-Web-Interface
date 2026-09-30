@@ -13,7 +13,9 @@ import { Footer } from './components/Footer';
 
 import { HomePage } from './pages/HomePage';
 import { LoginPage } from './pages/LoginPage';
+import { MicrogridNodesPage } from './pages/MicrogridNodesPage';
 import { UsersPage } from './pages/UsersPage';
+import { StationsMapPage } from './pages/StationsMapPage';
 
 import { AuthUser } from './types';
 
@@ -35,6 +37,10 @@ const AppContent: React.FC = () => {
         return <HomePage onNavigate={setCurrentPage} />;
       case 'login':
         return <LoginPage onLoginSuccess={handleLoginSuccess} />;
+      case 'nodes':
+        return isAuthenticated ? <MicrogridNodesPage /> : <LoginPage onLoginSuccess={handleLoginSuccess} />;
+      case 'map':
+        return isAuthenticated ? <StationsMapPage /> : <LoginPage onLoginSuccess={handleLoginSuccess} />;
       case 'users':
         return isAuthenticated && isBackOffice ? <UsersPage /> : <HomePage onNavigate={setCurrentPage} />;
       default:
