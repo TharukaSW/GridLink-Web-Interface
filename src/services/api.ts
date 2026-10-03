@@ -13,8 +13,12 @@ import {
   AuthUser,
   BookingSlot,
   CreateMicrogridNodeDTO,
+  CreateReservationDTO,
   MicrogridNode,
+  Reservation,
+  ReservationDashboardSummary,
   UpdateMicrogridNodeDTO,
+  UpdateReservationDTO,
   UpdateSlotDTO,
   UpdateUserDTO,
   User,
@@ -340,5 +344,88 @@ export const api = {
     return request<boolean>(`/api/microgrid-nodes/slots/${slotId}`, {
       method: 'DELETE',
     });
+  },
+
+  // --------------------------------------------------------------------------
+  // Energy Slot Reservations & Power Trading
+  // --------------------------------------------------------------------------
+  async getReservations(filter?: {
+    searchTerm?: string;
+    status?: string;
+    stationId?: string;
+    nic?: string;
+  }): Promise<ApiResponse<Reservation[]>> {
+    const query = new URLSearchParams();
+    if (filter?.searchTerm) query.append('searchTerm', filter.searchTerm);
+    if (filter?.status) query.append('status', filter.status);
+    if (filter?.stationId) query.append('stationId', filter.stationId);
+    if (filter?.nic) query.append('nic', filter.nic);
+    const qs = query.toString();
+    return request<Reservation[]>(`/api/Reservations${qs ? `?${qs}` : ''}`);
+  },
+
+  async getMyReservations(status?: string): Promise<ApiResponse<Reservation[]>> {
+    const params = status ? `?status=${encodeURIComponent(status)}` : '';
+    return request<Reservation[]>(`/api/Reservations/my-bookings${params}`);
+  },
+
+  async getReservationById(id: string): Promise<ApiResponse<Reservation>> {
+    return request<Reservation>(`/api/Reservations/${id}`);
+  },
+
+  async createReservation(payload: CreateReservationDTO): Promise<ApiResponse<Reservation>> {
+    return request<Reservation>('/api/Reservations', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async updateReservation(id: string, payload: UpdateReservationDTO): Promise<ApiResponse<Reservation>> {
+    return request<Reservation>(`/api/Reservations/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async cancelReservation(id: string, reason: string): Promise<ApiResponse<Reservation>> {
+    return request<Reservation>(`/api/Reservations/${id}/cancel`, {
+      method: 'PUT',
+      body: JSON.stringify({ reason }),
+    });
+  },
+
+  async approveReservation(id: string): Promise<ApiResponse<Reservation>> {
+    return request<Reservation>(`/api/Reservations/${id}/approve`, {
+      method: 'PUT',
+    });
+  },
+
+  async verifyQrCode(qrData: string): Promise<ApiResponse<Reservation>> {
+    return request<Reservation>('/api/Reservations/verify', {
+      method: 'POST',
+      body: JSON.stringify(qrData),
+    });
+  },
+
+  async finalizeReservation(
+    id: string,
+    payload: {
+      actualEnergyTransferredKWh: number;
+      operatorNotes?: string;
+    }
+  ): Promise<ApiResponse<Reservation>> {
+    return request<Reservation>(`/api/Reservations/${id}/finalize`, {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async getDashboardSummary(nic?: string): Promise<ApiResponse<ReservationDashboardSummary>> {
+    const params = nic ? `?nic=${encodeURIComponent(nic)}` : '';
+    return request<ReservationDashboardSummary>(`/api/Reservations/dashboard/summary${params}`);
+  },
+
+  async getAvailableStations(): Promise<ApiResponse<any[]>> {
+    return request<any[]>('/api/Reservations/stations');
   },
 };

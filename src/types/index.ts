@@ -92,6 +92,44 @@ export interface BookingSlot {
   updatedAt: string;
 }
 
+export interface Reservation {
+  id: string;
+  reservationNumber: string;
+  userId: string;
+  nic: string;
+  prosumerName: string;
+  prosumerContact: string;
+  stationId: string;
+  stationName: string;
+  slotId?: string;
+  slotNumber?: number;
+  reservationDateTime: string;
+  durationMinutes: number;
+  tradingType: 'DropOff' | 'Charging';
+  requestedEnergyKWh: number;
+  status: 'Pending' | 'Approved' | 'Completed' | 'Cancelled' | 'Rejected';
+  qrCodeData: string;
+  qrCodeImageBase64?: string;
+  cancellationReason?: string;
+  cancelledAt?: string;
+  cancelledBy?: string;
+  finalizedAt?: string;
+  finalizedBy?: string;
+  actualEnergyTransferredKWh?: number;
+  operatorNotes?: string;
+  createdAt: string;
+}
+
+export interface CreateReservationDTO {
+  stationId: string;
+  slotId?: string;
+  slotNumber?: number;
+  reservationDateTime: string;
+  durationMinutes: number;
+  tradingType: string;
+  requestedEnergyKWh: number;
+}
+
 export interface UpdateUserDTO {
   fullName: string;
   email: string;
@@ -106,5 +144,25 @@ export interface UpdateSlotDTO {
   capacityKWh: number;
   ratePerKWh: number;
   isAvailable: boolean;
+}
+
+export interface UpdateReservationDTO {
+  reservationDateTime: string;
+  durationMinutes: number;
+  requestedEnergyKWh: number;
+  tradingType: string;
+  stationId?: string;
+}
+
+export interface ReservationDashboardSummary {
+  totalReservations: number;
+  activeCount?: number;
+  activeReservations?: number;
+  pendingCount: number;
+  approvedFutureCount?: number;
+  approvedCount?: number;
+  completedCount: number;
+  cancelledCount: number;
+  recentReservations?: Reservation[];
 }
 

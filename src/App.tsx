@@ -13,8 +13,11 @@ import { Footer } from './components/Footer';
 
 import { HomePage } from './pages/HomePage';
 import { LoginPage } from './pages/LoginPage';
+import { DashboardPage } from './pages/DashboardPage';
 import { MicrogridNodesPage } from './pages/MicrogridNodesPage';
+import { ReservationsPage } from './pages/ReservationsPage';
 import { UsersPage } from './pages/UsersPage';
+import { OperatorScannerPage } from './pages/OperatorScannerPage';
 import { StationsMapPage } from './pages/StationsMapPage';
 
 import { AuthUser } from './types';
@@ -37,12 +40,22 @@ const AppContent: React.FC = () => {
         return <HomePage onNavigate={setCurrentPage} />;
       case 'login':
         return <LoginPage onLoginSuccess={handleLoginSuccess} />;
+      case 'dashboard':
+        return isAuthenticated ? <DashboardPage onNavigate={setCurrentPage} /> : <LoginPage onLoginSuccess={handleLoginSuccess} />;
       case 'nodes':
         return isAuthenticated ? <MicrogridNodesPage /> : <LoginPage onLoginSuccess={handleLoginSuccess} />;
+      case 'reservations':
+        return isAuthenticated ? <ReservationsPage /> : <LoginPage onLoginSuccess={handleLoginSuccess} />;
       case 'map':
         return isAuthenticated ? <StationsMapPage /> : <LoginPage onLoginSuccess={handleLoginSuccess} />;
       case 'users':
-        return isAuthenticated && isBackOffice ? <UsersPage /> : <HomePage onNavigate={setCurrentPage} />;
+        return isAuthenticated && isBackOffice ? <UsersPage /> : <DashboardPage onNavigate={setCurrentPage} />;
+      case 'scanner':
+        return isAuthenticated && (isGridOperator || isBackOffice) ? (
+          <OperatorScannerPage />
+        ) : (
+          <DashboardPage onNavigate={setCurrentPage} />
+        );
       default:
         return <HomePage onNavigate={setCurrentPage} />;
     }
