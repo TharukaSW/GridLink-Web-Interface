@@ -15,6 +15,7 @@ import {
   CreateMicrogridNodeDTO,
   CreateReservationDTO,
   MicrogridNode,
+  ProsumerProfile,
   Reservation,
   ReservationDashboardSummary,
   UpdateMicrogridNodeDTO,
@@ -152,6 +153,19 @@ export const api = {
     };
   },
 
+  async registerProsumerAuth(payload: {
+    nic: string;
+    fullName: string;
+    email: string;
+    phoneNumber: string;
+    address: string;
+    password: string;
+  }): Promise<ApiResponse<User>> {
+    return request<User>('/api/auth/register-prosumer', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
 
   // --------------------------------------------------------------------------
   // User Management (BackOffice System Admin)
@@ -221,6 +235,65 @@ export const api = {
 
   async getPendingUserActivations(): Promise<ApiResponse<User[]>> {
     return request<User[]>('/api/Users/pending-activations');
+  },
+
+  // --------------------------------------------------------------------------
+  // Prosumer Profile Management (NIC Primary Key)
+  // --------------------------------------------------------------------------
+  async getProsumers(status?: string): Promise<ApiResponse<ProsumerProfile[]>> {
+    const params = status ? `?status=${encodeURIComponent(status)}` : '';
+    return request<ProsumerProfile[]>(`/api/prosumers${params}`);
+  },
+
+  async getProsumerByNic(nic: string): Promise<ApiResponse<ProsumerProfile>> {
+    return request<ProsumerProfile>(`/api/prosumers/${encodeURIComponent(nic)}`);
+  },
+
+  async registerProsumer(payload: {
+    nic: string;
+    fullName: string;
+    email: string;
+    phoneNumber: string;
+    address: string;
+    password: string;
+  }): Promise<ApiResponse<ProsumerProfile>> {
+    return request<ProsumerProfile>('/api/prosumers', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async updateProsumerProfile(
+    nic: string,
+    payload: {
+      fullName: string;
+      email: string;
+      phoneNumber: string;
+      address: string;
+    }
+  ): Promise<ApiResponse<ProsumerProfile>> {
+    return request<ProsumerProfile>(`/api/prosumers/${encodeURIComponent(nic)}`, {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async activateProsumer(nic: string): Promise<ApiResponse<any>> {
+    return request<any>(`/api/prosumers/${encodeURIComponent(nic)}/activate`, {
+      method: 'PATCH',
+    });
+  },
+
+  async deactivateProsumer(nic: string): Promise<ApiResponse<any>> {
+    return request<any>(`/api/prosumers/${encodeURIComponent(nic)}/deactivate`, {
+      method: 'PATCH',
+    });
+  },
+
+  async requestProsumerDeactivation(nic: string): Promise<ApiResponse<any>> {
+    return request<any>(`/api/prosumers/${encodeURIComponent(nic)}/request-deactivation`, {
+      method: 'PATCH',
+    });
   },
 
   // --------------------------------------------------------------------------

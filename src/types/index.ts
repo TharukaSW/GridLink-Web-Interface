@@ -166,3 +166,12 @@ export interface ReservationDashboardSummary {
   recentReservations?: Reservation[];
 }
 
+export interface ProsumerProfile {
+  nic: string;
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  address: string;
+  status: string;
+  createdAt: string;
+}
