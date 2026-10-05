@@ -18,7 +18,7 @@ interface DashboardPageProps {
 }
 
 export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
-  const { user, isBackOffice, isGridOperator } = useAuth();
+  const { user, isBackOffice } = useAuth();
 
   const [summary, setSummary] = useState<ReservationDashboardSummary | null>(null);
   const [nodes, setNodes] = useState<MicrogridNode[]>([]);
@@ -104,11 +104,6 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ onNavigate }) => {
           {isBackOffice && (
             <button className="btn btn-primary-gridlink btn-sm" onClick={() => onNavigate('nodes')}>
               Register hub
-            </button>
-          )}
-          {(isGridOperator || isBackOffice) && (
-            <button className="btn btn-outline-secondary btn-sm" onClick={() => onNavigate('scanner')}>
-              Verify QR
             </button>
           )}
         </div>
