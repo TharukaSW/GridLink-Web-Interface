@@ -17,6 +17,7 @@ import { DashboardPage } from './pages/DashboardPage';
 import { MicrogridNodesPage } from './pages/MicrogridNodesPage';
 import { ReservationsPage } from './pages/ReservationsPage';
 import { UsersPage } from './pages/UsersPage';
+import { ProsumersPage } from './pages/ProsumersPage';
 import { OperatorScannerPage } from './pages/OperatorScannerPage';
 import { StationsMapPage } from './pages/StationsMapPage';
 
@@ -48,6 +49,8 @@ const AppContent: React.FC = () => {
         return isAuthenticated ? <ReservationsPage /> : <LoginPage onLoginSuccess={handleLoginSuccess} />;
       case 'map':
         return isAuthenticated ? <StationsMapPage /> : <LoginPage onLoginSuccess={handleLoginSuccess} />;
+      case 'prosumers':
+        return isAuthenticated ? <ProsumersPage /> : <LoginPage onLoginSuccess={handleLoginSuccess} />;
       case 'users':
         return isAuthenticated && isBackOffice ? <UsersPage /> : <DashboardPage onNavigate={setCurrentPage} />;
       case 'scanner':
