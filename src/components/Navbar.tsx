@@ -201,16 +201,6 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
                     <li className="nav-item">
                       <button
                         type="button"
-                        className={`nav-link-gridlink ${currentPage === 'scanner' ? 'active' : ''}`}
-                        onClick={() => handleNavClick('scanner')}
-                      >
-                        <span>QR Verification</span>
-                      </button>
-                    </li>
-
-                    <li className="nav-item">
-                      <button
-                        type="button"
                         className={`nav-link-gridlink ${currentPage === 'nodes' ? 'active' : ''}`}
                         onClick={() => handleNavClick('nodes')}
                       >
@@ -245,18 +235,6 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
 
           {/* Right Section: Operator Console Shortcut & User Profile */}
           <div className="d-flex align-items-center flex-wrap gap-2 mt-2 mt-xl-0">
-            {/* Quick Action for BackOffice to access Operator Scanner */}
-            {isAuthenticated && isBackOffice && (
-              <button
-                type="button"
-                className={`btn-nav-action me-2 ${currentPage === 'scanner' ? 'active' : ''}`}
-                onClick={() => handleNavClick('scanner')}
-                title="Open physical station operator verification station"
-              >
-                <span>Operator Scanner</span>
-              </button>
-            )}
-
             {/* User Session Profile & Logout */}
             {isAuthenticated && user ? (
               <div className="d-flex align-items-center gap-2">

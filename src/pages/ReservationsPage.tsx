@@ -888,34 +888,6 @@ export const ReservationsPage: React.FC = () => {
                     <strong className="text-success">{selectedRes.requestedEnergyKWh} kW/h</strong>
                   </div>
                 </div>
-
-                <div className="accordion" id="qrPayloadAccordion">
-                  <div className="accordion-item border">
-                    <h2 className="accordion-header">
-                      <button
-                        className="accordion-button collapsed py-2 small"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#qrPayloadCollapse"
-                      >
-                        <i className="bi bi-code-slash me-2"></i> View Cryptographic QR Payload
-                      </button>
-                    </h2>
-                    <div id="qrPayloadCollapse" className="accordion-collapse collapse">
-                      <div className="accordion-body p-2 bg-light">
-                        <textarea
-                          readOnly
-                          className="form-control form-control-sm font-monospace"
-                          rows={4}
-                          value={selectedRes.qrCodeData}
-                        ></textarea>
-                        <small className="text-muted d-block mt-1">
-                          Grid Operators can scan this payload using the Operator Mode verification tool.
-                        </small>
-                      </div>
-                    </div>
-                  </div>
-                </div>
               </div>
 
               <div className="modal-footer bg-light">
